@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`react-i18next HOCs to hooks transforms correctly 1`] = `"import { withTranslation } from 'react-i18next'"`;
