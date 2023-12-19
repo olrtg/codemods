@@ -1,3 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`react-i18next HOCs to hooks transforms correctly 1`] = `"import { withTranslation } from 'react-i18next'"`;
+exports[`react-i18next HOCs to hooks transforms correctly 1`] = `"import { useTranslation } from 'react-i18next'"`;
+
+exports[`react-i18next HOCs to hooks transforms correctly 2`] = `"export default (SomeComponent);"`;
+
+exports[`react-i18next HOCs to hooks transforms correctly 3`] = `
+"export default function SomeComponent({ t, i18n }) {
+  const {
+    t
+  } = useTranslation();
+
+  return <div></div>
+}"
+`;
+
+exports[`react-i18next HOCs to hooks transforms correctly 4`] = `
+"const SomeComponent = ({ t, i18n }) => {
+      return <div></div>
+    }"
+`;

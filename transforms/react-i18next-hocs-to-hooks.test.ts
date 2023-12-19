@@ -7,4 +7,26 @@ describe('react-i18next HOCs to hooks', () => {
     {},
     "import { withTranslation } from 'react-i18next'",
   )
+
+  defineSnapshotTest(
+    transformer,
+    {},
+    'export default withTranslation()(SomeComponent)',
+  )
+
+  defineSnapshotTest(
+    transformer,
+    {},
+    `export default function SomeComponent({ t, i18n }) {
+      return <div></div>
+    }`,
+  )
+
+  defineSnapshotTest(
+    transformer,
+    {},
+    `const SomeComponent = ({ t, i18n }) => {
+      return <div></div>
+    }`,
+  )
 })
