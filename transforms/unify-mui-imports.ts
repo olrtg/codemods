@@ -26,7 +26,7 @@ export default function transformer(file: FileInfo, { jscodeshift: j }: API) {
     '@mui/material/',
   )
 
-  const rawSpecifiers = componentImports.paths().map(path => {
+  const potentialSpecifiers = componentImports.paths().map(path => {
     const { value } = path.node.source
     if (typeof value !== 'string') return null
     return value.split('/').at(-1)!
@@ -41,16 +41,38 @@ export default function transformer(file: FileInfo, { jscodeshift: j }: API) {
       return local.name
     })
 
-  if (componentFinalImports) {
-  } else {
-    componentImports.insertBefore(
-      j.importDeclaration(
-        rawSpecifiers.map(s =>
-          j.importSpecifier(j.identifier(s), j.identifier(s)),
+  const specifiers = potentialSpecifiers
+    .map((potentialSpecifier, index) => {
+      if (!potentialSpecifier) return null
+
+      const defaultSpecifier = componentImportsDefaultSpecifiers[index]
+
+      if (defaultSpecifier && defaultSpecifier !== potentialSpecifier) {
+        return j.importSpecifier(
+          j.identifier(potentialSpecifier),
+          j.identifier(defaultSpecifier),
+        )
+      }
+
+      return j.importSpecifier(j.identifier(potentialSpecifier))
+    })
+    .filter(Boolean)
+
+  if (componentFinalImports.length) {
+    componentFinalImports.forEach(path => {
+      j(path).replaceWith(
+        j.importDeclaration(
+          [...path.node.specifiers!, ...specifiers],
+          path.node.source,
         ),
-        j.stringLiteral('@mui/material'),
-      ),
-    )
+      )
+    })
+  } else {
+    componentImports
+      .get()
+      .insertBefore(
+        j.importDeclaration(specifiers, j.stringLiteral('@mui/material')),
+      )
   }
   componentImports.remove()
 

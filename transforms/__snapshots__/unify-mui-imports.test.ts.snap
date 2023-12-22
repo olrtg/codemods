@@ -1,3 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`unify mui imports transforms correctly 1`] = `"import makeStyles from '@mui/styles/makeStyles'"`;
+exports[`unify mui imports converts to named imports 1`] = `"import { Box, Button, Grid } from "@mui/material";"`;
+
+exports[`unify mui imports converts to named imports using the existent import 1`] = `"import { Grid, Box, Button } from '@mui/material';"`;
+
+exports[`unify mui imports converts to named imports using the existent import while keeping the alias 1`] = `"import { Grid, Box, Button as AliasedButton } from '@mui/material';"`;
+
+exports[`unify mui imports converts to named imports while using keeping the alias 1`] = `"import Grid, { Box, Button as AliasedButton } from '@mui/material';"`;
+
+exports[`unify mui imports transforms correctly 1`] = `"import { Box, Button, Grid } from "@mui/material";"`;
+
+exports[`unify mui imports transforms correctly 2`] = `"import { Grid, Box, Button } from '@mui/material';"`;
+
+exports[`unify mui imports transforms correctly 3`] = `"import Grid, { Box, Button as AliasedButton } from '@mui/material';"`;
+
+exports[`unify mui imports transforms correctly 4`] = `"import { Grid, Box, Button as AliasedButton } from '@mui/material';"`;

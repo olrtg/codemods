@@ -7,7 +7,34 @@ describe('unify mui imports', () => {
     {},
     `import Box from '@mui/material/Box'
     import Button from '@mui/material/Button'
-    import Grid from '@mui/material/Grid'
-    import makeStyles from '@mui/styles/makeStyles'`,
+    import Grid from '@mui/material/Grid'`,
+    'converts to named imports',
+  )
+
+  defineSnapshotTest(
+    transformer,
+    {},
+    `import Box from '@mui/material/Box'
+    import Button from '@mui/material/Button'
+    import { Grid } from '@mui/material'`,
+    'converts to named imports using the existent import',
+  )
+
+  defineSnapshotTest(
+    transformer,
+    {},
+    `import Box from '@mui/material/Box'
+    import AliasedButton from '@mui/material/Button'
+    import Grid from '@mui/material'`,
+    'converts to named imports while using keeping the alias',
+  )
+
+  defineSnapshotTest(
+    transformer,
+    {},
+    `import Box from '@mui/material/Box'
+    import AliasedButton from '@mui/material/Button'
+    import { Grid } from '@mui/material'`,
+    'converts to named imports using the existent import while keeping the alias',
   )
 })
