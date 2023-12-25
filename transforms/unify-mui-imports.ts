@@ -12,24 +12,25 @@ function getImportWithSourceMatching(
   })
 }
 
-export default function transformer(file: FileInfo, { jscodeshift: j }: API) {
-  const root = j(file.source)
-
-  // NOTE: COMPONENTS CASE
-  const componentFinalImports = root.find(j.ImportDeclaration, {
-    source: { value: '@mui/material' },
+function convertToNamedImport(
+  j: core.JSCodeshift,
+  source: Collection<any>,
+  importSource: string,
+) {
+  const componentFinalImports = source.find(j.ImportDeclaration, {
+    source: { value: importSource },
   })
 
   const componentImports = getImportWithSourceMatching(
     j,
-    root,
-    '@mui/material/',
+    source,
+    `${importSource}/`,
   )
 
   const potentialSpecifiers = componentImports.paths().map(path => {
     const { value } = path.node.source
-    if (typeof value !== 'string') return null
-    return value.split('/').at(-1)!
+    if (typeof value !== 'string') return
+    return value.split('/').at(-1)
   })
 
   const componentImportsDefaultSpecifiers = componentImports
@@ -37,13 +38,13 @@ export default function transformer(file: FileInfo, { jscodeshift: j }: API) {
     .paths()
     .map(path => {
       const { local } = path.node
-      if (!local) return null
+      if (!local) return
       return local.name
     })
 
   const specifiers = potentialSpecifiers
     .map((potentialSpecifier, index) => {
-      if (!potentialSpecifier) return null
+      if (!potentialSpecifier) return
 
       const defaultSpecifier = componentImportsDefaultSpecifiers[index]
 
@@ -67,24 +68,24 @@ export default function transformer(file: FileInfo, { jscodeshift: j }: API) {
         ),
       )
     })
-  } else {
+  } else if (componentImports.length) {
     componentImports
       .get()
       .insertBefore(
-        j.importDeclaration(specifiers, j.stringLiteral('@mui/material')),
+        j.importDeclaration(specifiers, j.stringLiteral(importSource)),
       )
   }
-  componentImports.remove()
 
-  // NOTE: ICONS CASE
-  const iconImports = getImportWithSourceMatching(
-    j,
-    root,
-    '@mui/material-icons/',
-  )
-  const iconImportsDefaultSpecifiers = componentImports.find(
-    j.ImportDefaultSpecifier,
-  )
+  componentImports.remove()
+}
+
+export default function transformer(file: FileInfo, { jscodeshift: j }: API) {
+  const root = j(file.source)
+
+  convertToNamedImport(j, root, '@mui/material')
+  convertToNamedImport(j, root, '@mui/icons-material')
+  convertToNamedImport(j, root, '@mui/styles')
+  convertToNamedImport(j, root, '@mui/lab')
 
   return root.toSource()
 }

@@ -37,4 +37,10 @@ describe('unify mui imports', () => {
     import { Grid } from '@mui/material'`,
     'converts to named imports using the existent import while keeping the alias',
   )
+
+  defineSnapshotTest(
+    transformer,
+    {},
+    `import { emphasize } from '@mui/material/style'`,
+  )
 })
