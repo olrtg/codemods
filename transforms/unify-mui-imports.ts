@@ -8,7 +8,10 @@ function getImportWithSourceMatching(
   return source.find(j.ImportDeclaration).filter(path => {
     const value = path.node.source.value
     if (typeof value !== 'string') return false
-    return value.includes(searchString)
+    // Leave imports with import specifiers as is
+    if (path.node.specifiers?.some(i => i.type === 'ImportSpecifier'))
+      return false
+    return value.startsWith(searchString)
   })
 }
 
